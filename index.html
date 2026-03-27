@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Composite ABD Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Composite Laminate Analyzer</h1>
+        <p>Politecnico di Milano - Mechanical Engineering Project</p>
+        
+        <div id="input-section">
+            <h3>Add Layer</h3>
+            <label>Angle (θ): <input type="number" id="theta" value="0"></label>
+            <label>Thickness (mm): <input type="number" id="thick" value="0.125"></label>
+            <button onclick="addLayer()">Add Layer</button>
+        </div>
+
+        <table id="layupTable">
+            <thead>
+                <tr>
+                    <th>Layer #</th>
+                    <th>Angle (°)</th>
+                    <th>Thickness (m)</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+
+        <button class="calc-btn" onclick="calculateABD()">Compute ABD Matrix</button>
+
+        <div id="results">
+            <h3>A Matrix (Extensional Stiffness)</h3>
+            <div id="a-matrix" class="matrix-display"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
