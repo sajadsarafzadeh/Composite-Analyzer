@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Composite Analyzer</title>
+<title>Composite Laminate Analyzer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
 <link rel="stylesheet" href="style.css">
+<style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { border-collapse: collapse; margin-top: 10px; }
+    td, th { border: 1px solid #333; padding: 5px; text-align: center; }
+    .container { max-width: 900px; margin: auto; }
+    label { margin-right: 10px; }
+    input { width: 80px; margin-right: 10px; }
+    button { margin: 10px 0; padding: 5px 10px; }
+</style>
 </head>
 <body>
 
@@ -15,9 +24,9 @@
 
 <label>Material:
 <select id="material">
-<option value="carbon">Carbon/Epoxy</option>
-<option value="glass">Glass/Epoxy</option>
-<option value="kevlar">Kevlar/Epoxy</option>
+    <option value="carbon">Carbon/Epoxy</option>
+    <option value="glass">Glass/Epoxy</option>
+    <option value="kevlar">Kevlar/Epoxy</option>
 </select>
 </label>
 
@@ -43,29 +52,29 @@
 <tbody></tbody>
 </table>
 
+<h3>Apply Loads</h3>
+<label>N1: <input type="number" id="N1" value="0"></label>
+<label>N2: <input type="number" id="N2" value="0"></label>
+<label>N6: <input type="number" id="N6" value="0"></label>
+<br>
+<label>M1: <input type="number" id="M1" value="0"></label>
+<label>M2: <input type="number" id="M2" value="0"></label>
+<label>M6: <input type="number" id="M6" value="0"></label>
+<br>
 <button onclick="calculateABD()">Compute ABD</button>
 
-<h3>A Matrix</h3>
-<div id="A"></div>
+<h3>Matrices</h3>
+<div><strong>A Matrix:</strong></div><div id="A"></div>
+<div><strong>B Matrix:</strong></div><div id="B"></div>
+<div><strong>D Matrix:</strong></div><div id="D"></div>
+<div><strong>ABD Matrix:</strong></div><div id="ABD"></div>
+<div><strong>ABD Inverse:</strong></div><div id="ABD_inv"></div>
 
-<h3>B Matrix</h3>
-<div id="B"></div>
-
-<h3>D Matrix</h3>
-<div id="D"></div>
-
-<h3>Loads</h3>
-
-<label>N1 <input id="N1" value="0"></label>
-<label>N2 <input id="N2" value="0"></label>
-<label>N6 <input id="N6" value="0"></label>
-
-<label>M1 <input id="M1" value="0"></label>
-<label>M2 <input id="M2" value="0"></label>
-<label>M6 <input id="M6" value="0"></label>
-
-</div>
+<h3>Failure Analysis (Tsai-Wu)</h3>
+<div id="failure"></div>
 
 <script src="script.js"></script>
+
+</div>
 </body>
 </html>
