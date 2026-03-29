@@ -4,77 +4,57 @@
 <meta charset="UTF-8">
 <title>Composite Laminate Analyzer</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.30.0.min.js"></script>
 <link rel="stylesheet" href="style.css">
-<style>
-    body { font-family: Arial, sans-serif; padding: 20px; }
-    table { border-collapse: collapse; margin-top: 10px; }
-    td, th { border: 1px solid #333; padding: 5px; text-align: center; }
-    .container { max-width: 900px; margin: auto; }
-    label { margin-right: 10px; }
-    input { width: 80px; margin-right: 10px; }
-    button { margin: 10px 0; padding: 5px 10px; }
-</style>
 </head>
 <body>
 
 <div class="container">
-<h1>Composite Laminate Analyzer</h1>
+    <h1>Composite Laminate Analyzer</h1>
 
-<h3>Add Layer</h3>
+    <div id="input-section">
+        <h3>Add Layer</h3>
+        <label>Material:
+            <select id="material">
+                <option value="carbon">Carbon/Epoxy</option>
+                <option value="glass">Glass/Epoxy</option>
+                <option value="kevlar">Kevlar/Epoxy</option>
+            </select>
+        </label>
+        <label>Angle (deg):
+            <input type="number" id="theta" value="0">
+        </label>
+        <label>Thickness (mm):
+            <input type="number" id="thick" value="0.125">
+        </label>
+        <button onclick="addLayer()">Add Layer</button>
+    </div>
 
-<label>Material:
-<select id="material">
-    <option value="carbon">Carbon/Epoxy</option>
-    <option value="glass">Glass/Epoxy</option>
-    <option value="kevlar">Kevlar/Epoxy</option>
-</select>
-</label>
+    <table id="layupTable">
+        <thead>
+            <tr><th>#</th><th>Material</th><th>Angle</th><th>Thickness (m)</th></tr>
+        </thead>
+        <tbody></tbody>
+    </table>
 
-<label>Angle (deg):
-<input type="number" id="theta" value="0">
-</label>
+    <button onclick="calculateABD()">Compute ABD & Stress/Strain</button>
 
-<label>Thickness (mm):
-<input type="number" id="thick" value="0.125">
-</label>
+    <div id="results">
+        <h3>Matrices</h3>
+        <div id="A"></div>
+        <div id="B"></div>
+        <div id="D"></div>
+        <div id="ABD"></div>
+        <div id="abbd"></div>
 
-<button onclick="addLayer()">Add Layer</button>
+        <h3>Tsai-Wu Failure Analysis</h3>
+        <div id="failure"></div>
 
-<table id="layupTable">
-<thead>
-<tr>
-<th>#</th>
-<th>Material</th>
-<th>Angle</th>
-<th>Thickness (m)</th>
-</tr>
-</thead>
-<tbody></tbody>
-</table>
-
-<h3>Apply Loads</h3>
-<label>N1: <input type="number" id="N1" value="0"></label>
-<label>N2: <input type="number" id="N2" value="0"></label>
-<label>N6: <input type="number" id="N6" value="0"></label>
-<br>
-<label>M1: <input type="number" id="M1" value="0"></label>
-<label>M2: <input type="number" id="M2" value="0"></label>
-<label>M6: <input type="number" id="M6" value="0"></label>
-<br>
-<button onclick="calculateABD()">Compute ABD</button>
-
-<h3>Matrices</h3>
-<div><strong>A Matrix:</strong></div><div id="A"></div>
-<div><strong>B Matrix:</strong></div><div id="B"></div>
-<div><strong>D Matrix:</strong></div><div id="D"></div>
-<div><strong>ABBD Matrix:</strong></div><div id="ABD"></div>
-<div><strong>abbd matrix:</strong></div><div id="ABD_inv"></div>
-
-<h3>Failure Analysis (Tsai-Wu)</h3>
-<div id="failure"></div>
+        <h3>Stress & Strain Profiles</h3>
+        <div id="plots"></div>
+    </div>
+</div>
 
 <script src="script.js"></script>
-
-</div>
 </body>
 </html>
