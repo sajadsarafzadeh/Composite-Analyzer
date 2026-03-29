@@ -11,15 +11,31 @@
     <h1>Composite Laminate Analyzer</h1>
 
     <h3>Add Layer</h3>
-    <label>Angle (deg): <input type="number" id="theta" value="0"></label>
-    <label>Thickness (mm): <input type="number" id="thick" value="0.125"></label>
+
+    <label>Material:
+        <select id="material">
+            <option value="carbon">Carbon/Epoxy</option>
+            <option value="glass">Glass/Epoxy</option>
+            <option value="kevlar">Kevlar/Epoxy</option>
+        </select>
+    </label>
+
+    <label>Angle (deg):
+        <input type="number" id="theta" value="0">
+    </label>
+
+    <label>Thickness (mm):
+        <input type="number" id="thick" value="0.125">
+    </label>
+
     <button onclick="addLayer()">Add Layer</button>
 
     <table id="layupTable">
         <thead>
             <tr>
                 <th>#</th>
-                <th>Angle</th>
+                <th>Material</th>
+                <th>Angle (°)</th>
                 <th>Thickness (m)</th>
             </tr>
         </thead>
