@@ -1,54 +1,132 @@
 let layers = [];
 
-// Material Constants (Graphite/Epoxy example from your code)
-const E1 = 181e9, E2 = 10.3e9, v12 = 0.28, G12 = 7.17e9;
-const v21 = v12 / (E1 / E2);
+// Material (فعلاً ثابت – بعداً می‌تونی dropdown اضافه کنی)
+const E1 = 181e9;
+const E2 = 10.3e9;
+const v12 = 0.28;
+const G12 = 7.17e9;
+
+// ================= UI =================
 
 function addLayer() {
     const theta = parseFloat(document.getElementById('theta').value);
-    const t = parseFloat(document.getElementById('thick').value) * 1e-3; // mm to m
+    const t = parseFloat(document.getElementById('thick').value) * 1e-3;
+
     layers.push({ theta, t });
     updateTable();
 }
 
 function updateTable() {
     const tbody = document.querySelector('#layupTable tbody');
-    tbody.innerHTML = layers.map((l, i) => 
-        `<tr><td>${i+1}</td><td>${l.theta}</td><td>${l.t.toFixed(5)}</td></tr>`
+
+    tbody.innerHTML = layers.map((l, i) =>
+        `<tr>
+            <td>${i+1}</td>
+            <td>${l.theta}</td>
+            <td>${l.t.toExponential(3)}</td>
+        </tr>`
     ).join('');
 }
 
+// ================= CLT =================
+
+function getQ(E1, E2, v12, G12) {
+    const v21 = (v12 * E2) / E1;
+    const denom = 1 - v12 * v21;
+
+    return [
+        [E1/denom, v12*E2/denom, 0],
+        [v12*E2/denom, E2/denom, 0],
+        [0, 0, G12]
+    ];
+}
+
+function transformQ(Q, theta) {
+    const rad = theta * Math.PI / 180;
+    const m = Math.cos(rad);
+    const n = Math.sin(rad);
+
+    const Q11 = Q[0][0];
+    const Q22 = Q[1][1];
+    const Q12 = Q[0][1];
+    const Q66 = Q[2][2];
+
+    return [
+        [
+            Q11*m**4 + Q22*n**4 + 2*(Q12+2*Q66)*m**2*n**2,
+            (Q11+Q22-4*Q66)*m**2*n**2 + Q12*(m**4+n**4),
+            (Q11-Q12-2*Q66)*m**3*n - (Q22-Q12-2*Q66)*m*n**3
+        ],
+        [
+            (Q11+Q22-4*Q66)*m**2*n**2 + Q12*(m**4+n**4),
+            Q11*n**4 + Q22*m**4 + 2*(Q12+2*Q66)*m**2*n**2,
+            (Q11-Q12-2*Q66)*m*n**3 - (Q22-Q12-2*Q66)*m**3*n
+        ],
+        [
+            (Q11-Q12-2*Q66)*m**3*n - (Q22-Q12-2*Q66)*m*n**3,
+            (Q11-Q12-2*Q66)*m*n**3 - (Q22-Q12-2*Q66)*m**3*n,
+            (Q11+Q22-2*Q12-2*Q66)*m**2*n**2 + Q66*(m**4+n**4)
+        ]
+    ];
+}
+
 function calculateABD() {
-    let totalThick = layers.reduce((sum, l) => sum + l.t, 0);
-    let z = [-totalThick / 2];
-    let currentZ = -totalThick / 2;
-    
-    layers.forEach(l => {
-        currentZ += l.t;
-        z.push(currentZ);
-    });
+
+    if (layers.length === 0) {
+        alert("Add at least one layer!");
+        return;
+    }
+
+    // total thickness
+    let h = layers.reduce((sum, l) => sum + l.t, 0);
+
+    // z coordinates
+    let z = [-h / 2];
+    for (let i = 0; i < layers.length; i++) {
+        z.push(z[i] + layers[i].t);
+    }
 
     let A = [[0,0,0],[0,0,0],[0,0,0]];
-    
-    // Q Matrix (On-axis)
-    const Q11 = E1 / (1 - v12 * v21);
-    const Q12 = (v21 * E1) / (1 - v12 * v21);
-    const Q22 = E2 / (1 - v12 * v21);
-    const Q66 = G12;
+    let B = [[0,0,0],[0,0,0],[0,0,0]];
+    let D = [[0,0,0],[0,0,0],[0,0,0]];
 
-    layers.forEach((layer, i) => {
-        const rad = layer.theta * Math.PI / 180;
-        const m = Math.cos(rad);
-        const n = Math.sin(rad);
+    const Q = getQ(E1, E2, v12, G12);
 
-        // Q-bar Transformation (Off-axis)
-        const Qbar11 = Q11*Math.pow(m,4) + 2*(Q12+2*Q66)*Math.pow(m,2)*Math.pow(n,2) + Q22*Math.pow(n,4);
-        // ... (Other Qbar components would be added here similar to your MATLAB U-parameters)
+    layers.forEach((layer, k) => {
 
-        // Simple A-matrix sum: A = sum(Qbar * thickness)
-        A[0][0] += Qbar11 * layer.t;
+        const Qbar = transformQ(Q, layer.theta);
+
+        const z0 = z[k];
+        const z1 = z[k+1];
+
+        for (let i=0;i<3;i++){
+            for (let j=0;j<3;j++){
+                A[i][j] += Qbar[i][j]*(z1 - z0);
+                B[i][j] += 0.5*Qbar[i][j]*(z1**2 - z0**2);
+                D[i][j] += (1/3)*Qbar[i][j]*(z1**3 - z0**3);
+            }
+        }
     });
 
-    document.getElementById('a-matrix').innerText = JSON.stringify(A[0][0].toExponential(3));
-    alert("A[1,1] Calculated! (Full matrix logic follows same loop)");
+    displayMatrix("a-matrix", A);
+    displayMatrix("b-matrix", B);
+    displayMatrix("d-matrix", D);
+
+    console.log("A:", A);
+    console.log("B:", B);
+    console.log("D:", D);
+}
+
+// ================= DISPLAY =================
+
+function displayMatrix(id, M) {
+    const el = document.getElementById(id);
+
+    let html = "<table class='matrix'>";
+    M.forEach(row => {
+        html += "<tr>" + row.map(v => `<td>${v.toExponential(3)}</td>`).join("") + "</tr>";
+    });
+    html += "</table>";
+
+    el.innerHTML = html;
 }
