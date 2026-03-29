@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Composite ABD Analyzer</title>
+    <title>Composite Analyzer</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -35,23 +36,34 @@
             <tr>
                 <th>#</th>
                 <th>Material</th>
-                <th>Angle (°)</th>
+                <th>Angle</th>
                 <th>Thickness (m)</th>
             </tr>
         </thead>
         <tbody></tbody>
     </table>
 
-    <button onclick="calculateABD()">Compute ABD</button>
+    <h3>Loads</h3>
+    <input id="N1" placeholder="N1" value="0">
+    <input id="N2" placeholder="N2" value="0">
+    <input id="N6" placeholder="N6" value="0">
+    <input id="M1" placeholder="M1" value="0">
+    <input id="M2" placeholder="M2" value="0">
+    <input id="M6" placeholder="M6" value="0">
+
+    <button onclick="analyze()">Run Analysis</button>
 
     <h3>A Matrix</h3>
-    <div id="a-matrix"></div>
+    <div id="A"></div>
 
     <h3>B Matrix</h3>
-    <div id="b-matrix"></div>
+    <div id="B"></div>
 
     <h3>D Matrix</h3>
-    <div id="d-matrix"></div>
+    <div id="D"></div>
+
+    <h3>Failure Results</h3>
+    <div id="failure"></div>
 
 </div>
 
