@@ -1,18 +1,43 @@
 let layers = [];
 
-// Material (فعلاً ثابت – بعداً می‌تونی dropdown اضافه کنی)
-const E1 = 181e9;
-const E2 = 10.3e9;
-const v12 = 0.28;
-const G12 = 7.17e9;
+// ================= MATERIAL DATABASE =================
+const materials = {
+    carbon: {
+        name: "Carbon/Epoxy",
+        E1: 181e9,
+        E2: 10.3e9,
+        v12: 0.28,
+        G12: 7.17e9
+    },
+    glass: {
+        name: "Glass/Epoxy",
+        E1: 38.6e9,
+        E2: 8.27e9,
+        v12: 0.26,
+        G12: 4.14e9
+    },
+    kevlar: {
+        name: "Kevlar/Epoxy",
+        E1: 76e9,
+        E2: 5.5e9,
+        v12: 0.34,
+        G12: 2.3e9
+    }
+};
 
 // ================= UI =================
 
 function addLayer() {
     const theta = parseFloat(document.getElementById('theta').value);
     const t = parseFloat(document.getElementById('thick').value) * 1e-3;
+    const materialKey = document.getElementById('material').value;
 
-    layers.push({ theta, t });
+    layers.push({
+        theta,
+        t,
+        material: materials[materialKey]
+    });
+
     updateTable();
 }
 
@@ -22,6 +47,7 @@ function updateTable() {
     tbody.innerHTML = layers.map((l, i) =>
         `<tr>
             <td>${i+1}</td>
+            <td>${l.material.name}</td>
             <td>${l.theta}</td>
             <td>${l.t.toExponential(3)}</td>
         </tr>`
@@ -90,10 +116,11 @@ function calculateABD() {
     let B = [[0,0,0],[0,0,0],[0,0,0]];
     let D = [[0,0,0],[0,0,0],[0,0,0]];
 
-    const Q = getQ(E1, E2, v12, G12);
-
     layers.forEach((layer, k) => {
 
+        const mat = layer.material;
+
+        const Q = getQ(mat.E1, mat.E2, mat.v12, mat.G12);
         const Qbar = transformQ(Q, layer.theta);
 
         const z0 = z[k];
