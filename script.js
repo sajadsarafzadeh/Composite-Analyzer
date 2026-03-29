@@ -60,18 +60,61 @@ function Qbar(Q, theta){
     ];
 }
 
-function calculateA(){
-    let A=[[0,0,0],[0,0,0],[0,0,0]];
-    layers.forEach(l=>{
-        const Qb = Qbar(getQ(l.material), l.theta);
+function calculateABD(){
+
+    if(layers.length === 0){
+        alert("Add layers first!");
+        return;
+    }
+
+    // ================= thickness =================
+    let h = layers.reduce((sum,l)=>sum + l.t, 0);
+
+    // ================= z coordinates =================
+    let z = [-h/2];
+
+    layers.forEach(layer=>{
+        z.push(z[z.length-1] + layer.t);
+    });
+
+    console.log("z:", z);
+
+    // ================= matrices =================
+    let A = [[0,0,0],[0,0,0],[0,0,0]];
+    let B = [[0,0,0],[0,0,0],[0,0,0]];
+    let D = [[0,0,0],[0,0,0],[0,0,0]];
+
+    // ================= main loop =================
+    layers.forEach((layer, k)=>{
+
+        const Q = getQ(layer.material);
+        const Qb = getQbar(Q, layer.theta);
+
+        let z0 = z[k];
+        let z1 = z[k+1];
+
         for(let i=0;i<3;i++){
             for(let j=0;j<3;j++){
-                A[i][j] += Qb[i][j]*l.t;
+
+                A[i][j] += Qb[i][j] * (z1 - z0);
+
+                B[i][j] += 0.5 * Qb[i][j] * (z1**2 - z0**2);
+
+                D[i][j] += (1/3) * Qb[i][j] * (z1**3 - z0**3);
             }
         }
+
     });
-    displayMatrix('A',A);
+
+    displayMatrix('A', A);
+    displayMatrix('B', B);
+    displayMatrix('D', D);
+
+    console.log("A:", A);
+    console.log("B:", B);
+    console.log("D:", D);
 }
+
 
 function displayMatrix(id,M){
     document.getElementById(id).innerHTML =
