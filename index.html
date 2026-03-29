@@ -1,69 +1,52 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Composite Analyzer</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
-    <link rel="stylesheet" href="style.css">
+<meta charset="UTF-8">
+<title>Composite Analyzer</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
 
 <div class="container">
-    <h1>Composite Laminate Analyzer</h1>
+<h1>Composite Laminate Analyzer</h1>
 
-    <h3>Add Layer</h3>
+<h3>Add Layer</h3>
 
-    <label>Material:
-        <select id="material">
-            <option value="carbon">Carbon/Epoxy</option>
-            <option value="glass">Glass/Epoxy</option>
-            <option value="kevlar">Kevlar/Epoxy</option>
-        </select>
-    </label>
+<label>Material:
+<select id="material">
+<option value="carbon">Carbon/Epoxy</option>
+<option value="glass">Glass/Epoxy</option>
+<option value="kevlar">Kevlar/Epoxy</option>
+</select>
+</label>
 
-    <label>Angle (deg):
-        <input type="number" id="theta" value="0">
-    </label>
+<label>Angle (deg):
+<input type="number" id="theta" value="0">
+</label>
 
-    <label>Thickness (mm):
-        <input type="number" id="thick" value="0.125">
-    </label>
+<label>Thickness (mm):
+<input type="number" id="thick" value="0.125">
+</label>
 
-    <button onclick="addLayer()">Add Layer</button>
+<button onclick="addLayer()">Add Layer</button>
 
-    <table id="layupTable">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Material</th>
-                <th>Angle</th>
-                <th>Thickness (m)</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+<table id="layupTable">
+<thead>
+<tr>
+<th>#</th>
+<th>Material</th>
+<th>Angle</th>
+<th>Thickness (m)</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 
-    <h3>Loads</h3>
-    <input id="N1" placeholder="N1" value="0">
-    <input id="N2" placeholder="N2" value="0">
-    <input id="N6" placeholder="N6" value="0">
-    <input id="M1" placeholder="M1" value="0">
-    <input id="M2" placeholder="M2" value="0">
-    <input id="M6" placeholder="M6" value="0">
+<button onclick="calculateA()">Compute A Matrix</button>
 
-    <button onclick="analyze()">Run Analysis</button>
-
-    <h3>A Matrix</h3>
-    <div id="A"></div>
-
-    <h3>B Matrix</h3>
-    <div id="B"></div>
-
-    <h3>D Matrix</h3>
-    <div id="D"></div>
-
-    <h3>Failure Results</h3>
-    <div id="failure"></div>
+<h3>A Matrix</h3>
+<div id="A"></div>
 
 </div>
 
