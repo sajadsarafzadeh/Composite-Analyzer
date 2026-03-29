@@ -88,7 +88,7 @@ function calculateABD(){
     layers.forEach((layer, k)=>{
 
         const Q = getQ(layer.material);
-        const Qb = getQbar(Q, layer.theta);
+        const Qb = Qbar(Q, layer.theta);
 
         let z0 = z[k];
         let z1 = z[k+1];
